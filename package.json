@@ -1,0 +1,25 @@
+{
+  "name": "alliance-employee-management-system",
+  "version": "1.0.0",
+  "description": "Alliance is a Content Management System designed to make it easy to view, add, and revise a company's employee hierarchy. This is a command-line application that runs with the help of Node.js, Inquirer, and MySQL.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/twkirkpatrick/Alliance-Employee-Management-System.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/twkirkpatrick/Alliance-Employee-Management-System/issues"
+  },
+  "homepage": "https://github.com/twkirkpatrick/Alliance-Employee-Management-System#readme",
+  "dependencies": {
+    "figlet": "^1.5.0",
+    "inquirer": "^7.3.3",
+    "mysql": "^2.18.1"
+  }
+}
