@@ -13,31 +13,31 @@ const figlet = require("figlet");
 connection.connect(function(err) {
   if (err) throw err;
   
+  
 }); */
 
+greeting();
 
- 
-/* figlet('Hello World!!', function(err, data) {
-    if (err) {
-        console.log('Something went wrong...');
-        console.dir(err);
-        return;
-    }
-    console.log(data)
-}); */
+function greeting(){
+    figlet.text('Welcome to Alliance', {
+        font: 'Slant',
+        horizontalLayout: 'default',
+        verticalLayout: 'default',
+        width: 150,
+        whitespaceBreak: true
+    }, function(err, data) {
+        if (err) {
+            console.log('Something went wrong...');
+            console.dir(err);
+            return;
+        }
+        console.log(data);
+        console.log("-".repeat(95));
+        init();
+    });
+}
 
-figlet.text('Welcome to Alliance', {
-    font: 'Slant',
-    horizontalLayout: 'default',
-    verticalLayout: 'default',
-    width: 150,
-    whitespaceBreak: true
-}, function(err, data) {
-    if (err) {
-        console.log('Something went wrong...');
-        console.dir(err);
-        return;
-    }
-    console.log(data);
-    console.log("-".repeat(95));
-});
+function init(){
+    console.log("hey");
+}
+
