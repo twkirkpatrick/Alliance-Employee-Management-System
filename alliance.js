@@ -2,8 +2,9 @@ const inquirer = require("inquirer");
 const mysql = require("mysql");
 const figlet = require("figlet");
 const consoleTable = require("console.table");
+const chalk = require("chalk");
 
-const connection = mysql.createConnection({
+/* const connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
   user: "root",
@@ -13,11 +14,11 @@ const connection = mysql.createConnection({
 
 connection.connect(function(err) {
   if (err) throw err;
-  greeting();
   
-});
+  
+}); */
 
-
+greeting();
 
 function greeting(){
     figlet.text('Welcome to Alliance', {
@@ -32,7 +33,7 @@ function greeting(){
             console.dir(err);
             return;
         }
-        console.log(data);
+        console.log(chalk.green(data));
         console.log("-".repeat(95));
         init();
     });
