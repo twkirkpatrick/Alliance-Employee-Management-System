@@ -16,7 +16,7 @@ CREATE TABLE roles (
     salary DECIMAL,
     department_id INT,
     PRIMARY KEY(id),
-    FOREIGN KEY(department_id) REFERENCES department(id)
+    FOREIGN KEY(department_id) REFERENCES departments(id)
 );
 
 
@@ -30,8 +30,6 @@ CREATE TABLE employees (
   FOREIGN KEY(role_id) REFERENCES roles(id),
   FOREIGN KEY(manager_id) REFERENCES employees(id)
 );
-
-
 
 
 INSERT INTO departments (dept_name)
@@ -70,6 +68,9 @@ VALUES
 ("Polly", "Gump", 10, 9),
 ("Virginia", "Wilson", 11, 9),
 ("Chad", "Connor", 12, 9);
+
+
+
 
 
 
