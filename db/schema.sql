@@ -74,13 +74,7 @@ VALUES
 
 
 
-Error Code: 1366. Incorrect decimal value: '150,000' for column 'salary' at row 1
 
-Error Code: 1366. Incorrect decimal value: '150,000.00' for column 'salary' at row 1
-Error Code: 1136. Column count doesn't match value count at row 1
-
-
-Error Code: 1452. Cannot add or update a child row: a foreign key constraint fails (`alliance_db`.`employees`, CONSTRAINT `employees_ibfk_2` FOREIGN KEY (`manager_id`) REFERENCES `employees` (`id`))
 
 
 
