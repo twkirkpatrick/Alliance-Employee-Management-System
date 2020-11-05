@@ -38,9 +38,9 @@ VALUES ("Development"), ("Sales"), ("Marketing");
 INSERT INTO roles (title, salary, department_id)
 VALUES 
 ("Tech Lead", 150000, 1),
-("Full Stack Developer", 800000, 1), 
+("Full Stack Developer", 80000, 1), 
 ("Front End Developer", 75000, 1),
-("UX/UI Designer", 600000, 1),
+("UX/UI Designer", 60000, 1),
 
 ("Director of Sales", 115000, 2),
 ("Area Manager", 90000, 2),
