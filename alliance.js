@@ -46,28 +46,21 @@ function init(){
         type: "list",
         message: "What would you like to do?",
         choices : [
-            "View All Employees By Id",
-            "View All Employees By Department",
-            "View All Employees By Manager",
+            "View All Employees",
             "Add Employee",
             "Add Department",
             "Add Role",
-            "Update Employee Role"
-
+            "Update Employee Role",
+            "I'm Finished"
         ]
     })
     .then(answer =>{
         const choice = answer.mainMenu;
 
         switch(choice){
-            case "View All Employees By Id":
-                viewById();
-                break;
-            case "View All Employees By Department":
-                viewByDept();
-                break;
-            case "View All Employees By Manager":
-                viewByMan();
+
+            case "View All Employees":
+                viewAll();
                 break;
             case "Add Employee":
                 addEmployee();
@@ -80,15 +73,24 @@ function init(){
             case "Update Employee Role":
                 updateEmployeeRole();
                 break;
+            case "Im Finished":
+                connection.end();
+                break;
         }
     })
 }
 
-function viewByDept(){
-    console.log("Switch statement worked!");
+function viewAll(){
+   const query = "SELECT e.id, CONCAT(e.first_name, ' ', e.last_name) AS Name,roles.title AS Title, roles.salary AS Salary, departments.dept_name AS Department, CONCAT(m.first_name, ' ', m.last_name) AS Manager FROM employees e INNER JOIN roles ON e.role_id = roles.id INNER JOIN departments ON roles.department_id = departments.id LEFT JOIN employees m ON e.manager_id = m.id;";
+    
+   
+  connection.query(query, function (err, res){
+      console.table(res);
+      init();
+  })
+
+  
 }
 
-function viewById(){
-    console.log("Yes!!!! Switch statements fuck!");
-}
+
 
