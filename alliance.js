@@ -46,7 +46,9 @@ function init(){
         type: "list",
         message: "What would you like to do?",
         choices : [
-            "View All Employees",
+            "View Employees By ID",
+            "View Employees By Department",
+            "View Employees By Manager",
             "Add Employee",
             "Add Department",
             "Add Role",
@@ -59,9 +61,15 @@ function init(){
 
         switch(choice){
 
-            case "View All Employees":
-                viewAll();
+            case "View Employees By ID":
+                viewByID();
                 break;
+            case "View Employees By Department":
+                viewByDepartment();
+                break;
+            case "View Employees By Manager":
+                viewByManager();
+                break;    
             case "Add Employee":
                 addEmployee();
                 break;
@@ -80,7 +88,20 @@ function init(){
     })
 }
 
-function viewAll(){
+function viewByID(){
+    const query = "SELECT e.id, CONCAT(e.first_name, ' ', e.last_name) AS Name,roles.title AS Title, roles.salary AS Salary, departments.dept_name AS Department, CONCAT(m.first_name, ' ', m.last_name) AS Manager FROM employees e INNER JOIN roles ON e.role_id = roles.id INNER JOIN departments ON roles.department_id = departments.id LEFT JOIN employees m ON e.manager_id = m.id ORDER BY e.id";
+     
+    
+   connection.query(query, function (err, res){
+       console.table(res);
+       init();
+   })
+ 
+   
+ }
+
+
+function viewByDepartment(){
    const query = "SELECT e.id, CONCAT(e.first_name, ' ', e.last_name) AS Name,roles.title AS Title, roles.salary AS Salary, departments.dept_name AS Department, CONCAT(m.first_name, ' ', m.last_name) AS Manager FROM employees e INNER JOIN roles ON e.role_id = roles.id INNER JOIN departments ON roles.department_id = departments.id LEFT JOIN employees m ON e.manager_id = m.id;";
     
    
@@ -91,6 +112,18 @@ function viewAll(){
 
   
 }
+
+function viewByManager(){
+    const query = "SELECT e.id, CONCAT(e.first_name, ' ', e.last_name) AS Name,roles.title AS Title, roles.salary AS Salary, departments.dept_name AS Department, CONCAT(m.first_name, ' ', m.last_name) AS Manager FROM employees e INNER JOIN roles ON e.role_id = roles.id INNER JOIN departments ON roles.department_id = departments.id LEFT JOIN employees m ON e.manager_id = m.id ORDER BY e.manager_id";
+     
+    
+   connection.query(query, function (err, res){
+       console.table(res);
+       init();
+   })
+ 
+   
+ }
 
 
 
