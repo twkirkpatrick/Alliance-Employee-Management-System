@@ -44,6 +44,16 @@ INNER JOIN roles ON e.role_id = roles.id
 INNER JOIN departments ON roles.department_id = departments.id
 LEFT JOIN employees m ON e.manager_id = m.id;
 
+USE alliance_DB;
+SELECT
+roles.title AS Title,
+roles.salary AS Salary,
+departments.dept_name AS Department
+
+
+FROM roles 
+INNER JOIN departments ON roles.department_id = departments.id
+
 
 
 

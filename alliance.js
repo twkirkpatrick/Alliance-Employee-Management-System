@@ -3,7 +3,7 @@ const mysql = require("mysql");
 const figlet = require("figlet");
 const consoleTable = require("console.table");
 const chalk = require("chalk");
-const db = require("./db")
+
 
 var roleID;
 var managerID;
@@ -53,6 +53,8 @@ function init(){
             "View Employees By ID",
             "View Employees By Department",
             "View Employees By Manager",
+            "View All Roles",
+            "View All Departments",
             "Add Employee",
             "Add Department",
             "Add Role",
@@ -73,7 +75,13 @@ function init(){
                 break;
             case "View Employees By Manager":
                 viewByManager();
+                break; 
+            case "View All Roles":
+                viewAllRoles();
                 break;    
+            case "View All Departments":
+                viewAllDepts();
+                break;       
             case "Add Employee":
                 addEmployee();
                 break;
@@ -82,8 +90,9 @@ function init(){
                 break;
             case "Add Role":
                 addRole();
+            
             case "Update Employee Role":
-                updateEmployeeRole();
+                /* updateEmployeeRole(); */
                 break;
             case "Im Finished":
                 connection.end();
@@ -252,6 +261,81 @@ function viewByManager(){
 
     
  }
+
+ function addDept(){
+    
+     inquirer.prompt({
+         type: "input",
+         message: "Which department would you like to add?",
+         name: "newDepartment"
+     }).then(answers =>{
+         connection.query("INSERT INTO departments (dept_name) VALUES (?)", [answers.newDepartment], function(err, results){
+             console.log("\nNew department added!\n")
+             init();
+         })
+     })
+ }
+
+ function addRole(){
+
+    connection.query("SELECT * FROM departments", function(err, results){
+        inquirer.prompt([
+            {
+                type: "input",
+                name: "roleName",
+                message: "What is the name of the role?",
+    
+            },
+            {
+                type: "input",
+                name:"salary",
+                message: "What is the salary of the role?"
+            },
+            {
+                type: "list",
+                name: "corresDept",
+                message: "Which department is the role in?",
+                choices: function(){
+                    const deptArray = [];
+                    for (let i = 0; i < results.length; i++){
+                        deptArray.push(results[i].dept_name)
+                    }
+                    return deptArray;
+                }
+            }
+        ]).then(answers =>{
+            var deptID;
+            for (let i = 0; i < results.length; i++){
+                if (answers.corresDept === results[i].dept_name){
+                    deptID = results[i].id;
+                }
+            }
+
+            var salary = parseInt(answers.salary);
+
+            
+            connection.query(`INSERT INTO roles (title, salary, department_id) VALUES ("${answers.roleName}", ${salary}, ${deptID})`, function(err, results){
+                if (err) throw err;
+                console.log("\n Role added!\n");
+            })
+        })
+    })
+    
+ }
+
+ function viewAllRoles(){
+     connection.query("SELECT roles.title AS Title, roles.salary AS Salary, departments.dept_name AS Department FROM roles INNER JOIN departments ON roles.department_id = departments.id", function(err, results){
+         console.table(results);
+         init();
+     })
+ }
+
+ function viewAllDepts(){
+    connection.query("SELECT * FROM departments", function(err, results){
+        console.table(results);
+        init();
+    })
+}
 
 
 
