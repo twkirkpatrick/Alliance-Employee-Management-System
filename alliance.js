@@ -255,8 +255,10 @@ function viewByManager(){
                     break;
             }
 
-            console.log(roleID);
-            console.log(managerID);
+            connection.query("INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES(?, ?, ?, ?)", [answers.employeeFirstName, answers.employeeLastName, roleID,managerID], function(err, results){
+                if(err) throw err;
+                init();
+            });
 
             
         }) 
