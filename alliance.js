@@ -3,6 +3,10 @@ const mysql = require("mysql");
 const figlet = require("figlet");
 const consoleTable = require("console.table");
 const chalk = require("chalk");
+const db = require("./db")
+
+var roleID;
+var managerID;
 
  const connection = mysql.createConnection({
   host: "localhost",
@@ -125,8 +129,41 @@ function viewByManager(){
    
  }
 
-  function addEmployee(){
+  
+
+    function addEmployee(){
     const query = "SELECT e.id, CONCAT(e.first_name, ' ', e.last_name) AS Name,roles.title AS Title, roles.salary AS Salary, departments.dept_name AS Department, CONCAT(m.first_name, ' ', m.last_name) AS Manager FROM employees e INNER JOIN roles ON e.role_id = roles.id INNER JOIN departments ON roles.department_id = departments.id LEFT JOIN employees m ON e.manager_id = m.id ORDER BY e.manager_id";
+    
+
+/*       function getRoles(){
+         connection.query("SELECT * FROM roles", function(err, res){
+            if (err) throw err;
+            /* console.log("rees", res) */
+            /* const array = [];
+
+            array.push(res.title); */
+
+        //    return res;
+
+            
+
+    //    })  
+   //  } 
+
+    /* const roles = await getRoles();
+
+    console.log(roles) */
+   
+    
+
+/*     const roleChoices = roles.map(title =>{
+        {name: title}
+    }) */
+
+ 
+    //const roleChoices = roles.map(title) => ( {
+    //    name: title
+   // })
 
     connection.query(query, function (err, results){
        
@@ -156,7 +193,7 @@ function viewByManager(){
                     return roleArray;
                     
 
-                }
+                } 
             },
             {
                 type: "list",
@@ -175,95 +212,46 @@ function viewByManager(){
                 }
             } 
         ]).then(answers => {
-            let roleID;
-            switch(answers.employeeRole){
-                
-                case "Front End Developer":
-                    roleID = 1; 
-                    break;
-                case "Tech Lead":
-                    roleID = 2;
-                    break;
-                case "Director of Marketing":
-                    roleID = 3;
-                    break;    
-                case "Account Manager":
-                    roleID = 4;
-                    break;
-                case "Director of Sales":
-                    roleID = 5;
-                    break;
-                case "Full Stack Developer":
-                    roleID= 6;
-                case "SEO Analyst":
-                    roleID = 7;
-                    break;
-                case "Account Strategist":
-                    roleID = 8;
-                    break;
-                case "Area Manager":
-                    roleID = 9;
-                    break;
-                case "UX/UI Designer":
-                    roleID = 10;
-                    break;
-                case "Inside Sales":
-                    roleID = 11;
-                    break;
-                case "SEM Analyst":
-                    roleID = 12;
-                    break;
-            }
+           connection.query("SELECT * FROM roles", function(err, results){
+               
 
-            let managerID;
-            switch(answers.employeeManager){
-                
-                case "James Godfrey":
-                    managerID = 1; 
-                    break;
-                case "Tony Bishop":
-                    managerID = 2;
-                    break;
-                case "Graham Ball":
-                    managerID = 3;
-                    break;    
-                case "Tom Raymond":
-                    managerID = 4;
-                    break;
-                case "Alice Chen":
-                    managerID = 5;
-                    break;
-                case "Chad Connor":
-                    managerID = 6;
-                case "Dan Parker":
-                    managerID = 7;
-                    break;
-                case "Pete Thomas":
-                    managerID = 8;
-                    break;
-                case "Polly Gump":
-                    managerID = 9;
-                    break;
-                case "Virginia Wilson":
-                    managerID = 10;
-                    break;
-                case "Hector Raymond":
-                    managerID = 11;
-                    break;
-                case "Matt Willis":
-                    managerID = 12;
-                    break;
-            }
+                for (let i = 0; i < results.length; i++){
+                   if (answers.employeeRole === results[i].title){
+                     roleID = results[i].id;
+                   }
+               }
 
-            connection.query("INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES(?, ?, ?, ?)", [answers.employeeFirstName, answers.employeeLastName, roleID,managerID], function(err, results){
-                if(err) throw err;
-                init();
-            });
+               connection.query(query, function(err, results){
+               
+                for (let i = 0; i < results.length; i++){
+                 if (answers.employeeManager === results[i].Name){
+                     managerID = results[i].id
+                 }
+             }
+
+             addQuery(roleID, managerID, answers.employeeFirstName, answers.employeeLastName);
+ 
+
+                
+            }) 
+
+            
+           })
 
             
         }) 
     })
  } 
+
+ function addQuery(roleID, managerID, employeeFirstName, employeeLastName){
+    connection.query("INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES(?, ?, ?, ?)", [employeeFirstName, employeeLastName, roleID, managerID], function(err, results){
+        if(err) throw err;
+        console.log("Employee added to Alliance! \n")
+        init();
+    });    
+
+    
+ }
 
 
 
