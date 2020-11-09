@@ -7,6 +7,8 @@ const chalk = require("chalk");
 
 var roleID;
 var managerID;
+var roleArray = [];
+
 
  const connection = mysql.createConnection({
   host: "localhost",
@@ -90,6 +92,7 @@ function init(){
                 break;
             case "Add Role":
                 addRole();
+                break;
             
             case "Update Employee Role":
                  updateEmployeeRole(); 
@@ -168,16 +171,7 @@ function viewByManager(){
                 type: "list",
                 message: "What is the role of the employee?",
                 name: "employeeRole",
-                choices: function(){
-                    var roleArray = [];
-                    for(var i = 0; i < results.length; i++){
-                        roleArray.push(results[i].Title);
-                        
-                    }
-                    return roleArray;
-                    
-
-                } 
+                choices: getRoles(),
             },
             {
                 type: "list",
@@ -292,9 +286,12 @@ function viewByManager(){
             connection.query(`INSERT INTO roles (title, salary, department_id) VALUES ("${answers.roleName}", ${salary}, ${deptID})`, function(err, results){
                 if (err) throw err;
                 console.log("\n Role added!\n");
+                init();
             })
         })
     })
+
+    
     
  }
 
@@ -337,43 +334,40 @@ function updateEmployeeRole(){
                 type: "list",
                 name: "employeeUpRole",
                 message: "What is the employee's new role?",
-                choices: function(){
-                    roleArr = [];
-                    for(let i = 0; i < results.length; i++){
-                        roleArr.push(results[i].Title);
-                    }
-                     return roleArr.filter((a, b) => roleArr.indexOf(a) === b);
-                }
+                choices: getRoles()
             }
         ]).then(answers =>{
 
-            var manID;
-            var posID; 
-            var empID; 
             for (let i = 0; i < results.length; i++){
                 if (answers.employeeToUp === results[i].Name){
-                    empID = results[i].id;
-                     /* const nameSplit = results[i].Name.split(" ");
-                     firstName = nameSplit[0];
-                     lastName = nameSplit[1];
- */
+                    var empID = results[i].id;
+ 
                 }
                  if (answers.employeeUpRole === results[i].Title){
-                    manID = results[i].managerID;
-                    posID = results[i].RoleID;
+                    var manID = results[i].managerID;
+                    var posID = results[i].RoleID;
                 }
 
             }
 
             connection.query(`UPDATE employees SET role_id = ${posID}, manager_id = ${manID}  WHERE id = ${empID}`, function(err, results){
-                console.log("\n Employee role updated!");
+                console.log("\n Employee role updated!\n");
                 init();
             })
 
-            
-            
         })  
     })
+}
+
+function getRoles(){
+
+    connection.query("SELECT * FROM roles", function(err, results){
+        for(var i = 0; i < results.length; i++){
+        roleArray.push(results[i].title);        
+    }
+    })
+    
+    return roleArray;
 }
 
 
