@@ -92,7 +92,7 @@ function init(){
                 addRole();
             
             case "Update Employee Role":
-                /* updateEmployeeRole(); */
+                 updateEmployeeRole(); 
                 break;
             case "Im Finished":
                 connection.end();
@@ -106,6 +106,7 @@ function viewByID(){
      
     
    connection.query(query, function (err, res){
+       console.log("\n");
        console.table(res);
        init();
    })
@@ -115,10 +116,11 @@ function viewByID(){
 
 
 function viewByDepartment(){
-   const query = "SELECT e.id, CONCAT(e.first_name, ' ', e.last_name) AS Name,roles.title AS Title, roles.salary AS Salary, departments.dept_name AS Department, CONCAT(m.first_name, ' ', m.last_name) AS Manager FROM employees e INNER JOIN roles ON e.role_id = roles.id INNER JOIN departments ON roles.department_id = departments.id LEFT JOIN employees m ON e.manager_id = m.id;";
+   const query = "SELECT e.id, CONCAT(e.first_name, ' ', e.last_name) AS Name,roles.title AS Title, roles.salary AS Salary, departments.dept_name AS Department, CONCAT(m.first_name, ' ', m.last_name) AS Manager FROM employees e INNER JOIN roles ON e.role_id = roles.id INNER JOIN departments ON roles.department_id = departments.id LEFT JOIN employees m ON e.manager_id = m.id ORDER BY departments.dept_name;";
     
    
   connection.query(query, function (err, res){
+      console.log("\n");
       console.table(res);
       init();
   })
@@ -131,6 +133,7 @@ function viewByManager(){
      
     
    connection.query(query, function (err, results){
+       console.log("\n");
        console.table(results);
        init();
    })
@@ -143,36 +146,6 @@ function viewByManager(){
     function addEmployee(){
     const query = "SELECT e.id, CONCAT(e.first_name, ' ', e.last_name) AS Name,roles.title AS Title, roles.salary AS Salary, departments.dept_name AS Department, CONCAT(m.first_name, ' ', m.last_name) AS Manager FROM employees e INNER JOIN roles ON e.role_id = roles.id INNER JOIN departments ON roles.department_id = departments.id LEFT JOIN employees m ON e.manager_id = m.id ORDER BY e.manager_id";
     
-
-/*       function getRoles(){
-         connection.query("SELECT * FROM roles", function(err, res){
-            if (err) throw err;
-            /* console.log("rees", res) */
-            /* const array = [];
-
-            array.push(res.title); */
-
-        //    return res;
-
-            
-
-    //    })  
-   //  } 
-
-    /* const roles = await getRoles();
-
-    console.log(roles) */
-   
-    
-
-/*     const roleChoices = roles.map(title =>{
-        {name: title}
-    }) */
-
- 
-    //const roleChoices = roles.map(title) => ( {
-    //    name: title
-   // })
 
     connection.query(query, function (err, results){
        
@@ -190,6 +163,8 @@ function viewByManager(){
                 name: "employeeLastName"
             },
             {
+
+                //FIND A WAY TO GRAB ROLES FROM ROLES TABLE-- NOT FROM EMPLOYEES QUERY
                 type: "list",
                 message: "What is the role of the employee?",
                 name: "employeeRole",
@@ -325,6 +300,7 @@ function viewByManager(){
 
  function viewAllRoles(){
      connection.query("SELECT roles.title AS Title, roles.salary AS Salary, departments.dept_name AS Department FROM roles INNER JOIN departments ON roles.department_id = departments.id", function(err, results){
+         console.log("\n")
          console.table(results);
          init();
      })
@@ -332,8 +308,71 @@ function viewByManager(){
 
  function viewAllDepts(){
     connection.query("SELECT * FROM departments", function(err, results){
+        console.log("\n")
         console.table(results);
         init();
+    })
+}
+
+function updateEmployeeRole(){
+    const query = "SELECT e.id, m.id AS managerID, roles.id AS RoleID, CONCAT(e.first_name, ' ', e.last_name) AS Name,roles.title AS Title, roles.salary AS Salary, departments.dept_name AS Department, CONCAT(m.first_name, ' ', m.last_name) AS Manager FROM employees e INNER JOIN roles ON e.role_id = roles.id INNER JOIN departments ON roles.department_id = departments.id LEFT JOIN employees m ON e.manager_id = m.id ORDER BY departments.dept_name;";
+
+    connection.query(query, function(err, results){
+        console.log(results);
+        
+          inquirer.prompt([
+            {
+                type: "list",
+                name: "employeeToUp",
+                message: "Which employee would you like to update?",
+                choices: function(){
+                    employeeArr = [];
+                    for(let i = 0; i < results.length; i++){
+                        employeeArr.push(results[i].Name)
+                    }
+                    return employeeArr;
+                }
+            },
+            {
+                type: "list",
+                name: "employeeUpRole",
+                message: "What is the employee's new role?",
+                choices: function(){
+                    roleArr = [];
+                    for(let i = 0; i < results.length; i++){
+                        roleArr.push(results[i].Title);
+                    }
+                     return roleArr.filter((a, b) => roleArr.indexOf(a) === b);
+                }
+            }
+        ]).then(answers =>{
+
+            var manID;
+            var posID; 
+            var empID; 
+            for (let i = 0; i < results.length; i++){
+                if (answers.employeeToUp === results[i].Name){
+                    empID = results[i].id;
+                     /* const nameSplit = results[i].Name.split(" ");
+                     firstName = nameSplit[0];
+                     lastName = nameSplit[1];
+ */
+                }
+                 if (answers.employeeUpRole === results[i].Title){
+                    manID = results[i].managerID;
+                    posID = results[i].RoleID;
+                }
+
+            }
+
+            connection.query(`UPDATE employees SET role_id = ${posID}, manager_id = ${manID}  WHERE id = ${empID}`, function(err, results){
+                console.log("\n Employee role updated!");
+                init();
+            })
+
+            
+            
+        })  
     })
 }
 
