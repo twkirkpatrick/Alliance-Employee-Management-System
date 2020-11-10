@@ -61,6 +61,8 @@ function init(){
             "Add Department",
             "Add Role",
             "Update Employee Role",
+            "Remove Employee",
+            "Remove Department",
             "I'm Finished"
         ]
     })
@@ -93,9 +95,14 @@ function init(){
             case "Add Role":
                 addRole();
                 break;
-            
             case "Update Employee Role":
                  updateEmployeeRole(); 
+                break;
+            case "Remove Employee":
+                removeEmployee(); 
+                break;
+            case "Remove Department":
+                removeDepartment(); 
                 break;
             case "Im Finished":
                 connection.end();
@@ -368,6 +375,33 @@ function getRoles(){
     })
     
     return roleArray;
+}
+
+function removeEmployee(){
+    connection.query("SELECT * FROM employees", function(err, results){
+        inquirer.prompt({
+            type: "list",
+            message: "Which employee would you like to remove?",
+            name: "removeEmployee",
+            choices: function(){
+                removeArray = [];
+                for(let i = 0; i < results.length; i++){
+                    removeArray.push(`${results[i].first_name} ${results[i].last_name}`)
+                 
+                }
+                
+                return removeArray;
+            }
+        }).then(answers => {
+            var nameSplit = answers.removeEmployee.split(" ");
+           
+            connection.query(`DELETE FROM employees WHERE first_name = "${nameSplit[0]}" AND last_name = "${nameSplit[1]}" `, function(err, results){
+                if (err) throw err;
+                console.log("\n Employee removed from system!\n");
+                init();
+            })
+        })
+    })
 }
 
 
