@@ -64,7 +64,6 @@ function init(){
             "Add Role",
             "Update Employee Role",
             "Remove Employee",
-            "Remove Department",
             "I'm Finished"
         ]
     })
@@ -103,11 +102,8 @@ function init(){
             case "Remove Employee":
                 removeEmployee(); 
                 break;
-            case "Remove Department":
-                removeDepartment(); 
-                break;
-            case "Im Finished":
-                connection.end();
+            case "I'm Finished":
+                fareWell();
                 break;
         }
     })
@@ -238,7 +234,9 @@ function viewByManager(){
  function addQuery(roleID, managerID, employeeFirstName, employeeLastName){
     connection.query("INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES(?, ?, ?, ?)", [employeeFirstName, employeeLastName, roleID, managerID], function(err, results){
         if(err) throw err;
-        console.log("Employee added to Alliance! \n")
+
+        
+        console.log("\nEmployee added to Alliance! \n")
         init();
     });    
 
@@ -417,6 +415,24 @@ function removeEmployee(){
             })
         })
     })
+}
+
+function fareWell(){
+    figlet.text('Thank you for using Alliance', {
+        font: 'Slant',
+        horizontalLayout: 'default',
+        verticalLayout: 'default',
+        width: 150,
+        whitespaceBreak: true
+    }, function(err, data) {
+        if (err) {
+            console.log('Something went wrong...');
+            console.dir(err);
+            return;
+        }
+        console.log(chalk.green(data));
+        connection.end();
+    });
 }
 
 
