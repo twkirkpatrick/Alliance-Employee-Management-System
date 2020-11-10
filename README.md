@@ -4,8 +4,8 @@
 Alliance is a Content Management System designed to make it easy to view, add, and revise data within a company's employee hierarchy.  This is a command line application that runs with the help of Node.js, Inquirer, and MySQL.
 
 ## User Story
-As a business owner
-I want to be able to view and manage the departments, roles, and employees in my company
+As a business owner <br>
+I want to be able to view and manage the departments, roles, and employees in my company <br>
 So that I can organize and plan my business
 
 
@@ -25,7 +25,7 @@ So that I can organize and plan my business
 1. Clone the repo
 2. Install required dependencies by running command ```npm i```
 3. Use ```schema.sql``` file to insert tables into MySQL
-4. Insert data specific to your company by creating a ```.csv file``` and importing into MySQL, or via a ```seeds.sql``` file.
+4. Insert data specific to your company by creating a ```.csv file``` and importing into MySQL, or via a ```seeds.sql``` file
 5. Run command ```node alliance``` to get started
 
 ## Usage
@@ -39,11 +39,11 @@ Follow the inquirer prompts to view, add, and edit your data
 
 
 ## Resources
-**Node.js**
-**MySQL**
-**Inquirer**
-**Figlet**
-**Console Table**
+**Node.js** <br>
+**MySQL** <br>
+**Inquirer** <br>
+**Figlet** <br>
+**Console Table** <br>
 **Chalk**
 
 ## Contributions
