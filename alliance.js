@@ -1,15 +1,16 @@
+//DEPENDENCIES
 const inquirer = require("inquirer");
 const mysql = require("mysql");
 const figlet = require("figlet");
 const consoleTable = require("console.table");
 const chalk = require("chalk");
 
-
+//GLOBAL VARIABLES
 var roleID;
 var managerID;
 var roleArray = [];
 
-
+//MYSQL DATABASE CONNECTION
  const connection = mysql.createConnection({
   host: "localhost",
   port: 3306,
@@ -25,7 +26,7 @@ connection.connect(function(err) {
 }); 
 
 
-
+//GREETING
 function greeting(){
     figlet.text('Welcome to Alliance', {
         font: 'Slant',
@@ -45,6 +46,7 @@ function greeting(){
     });
 }
 
+//CONTROLLER FUNCTION/MAIN MENU
 function init(){
     inquirer
     .prompt({
@@ -68,7 +70,7 @@ function init(){
     })
     .then(answer =>{
         const choice = answer.mainMenu;
-
+        //Switch statement used for checking the function that the user picks
         switch(choice){
 
             case "View Employees By ID":
@@ -111,6 +113,7 @@ function init(){
     })
 }
 
+//View all employees ordered by ID number
 function viewByID(){
     const query = "SELECT e.id, CONCAT(e.first_name, ' ', e.last_name) AS Name,roles.title AS Title, roles.salary AS Salary, departments.dept_name AS Department, CONCAT(m.first_name, ' ', m.last_name) AS Manager FROM employees e INNER JOIN roles ON e.role_id = roles.id INNER JOIN departments ON roles.department_id = departments.id LEFT JOIN employees m ON e.manager_id = m.id ORDER BY e.id";
      
@@ -124,7 +127,7 @@ function viewByID(){
    
  }
 
-
+//View all employees ordered by department
 function viewByDepartment(){
    const query = "SELECT e.id, CONCAT(e.first_name, ' ', e.last_name) AS Name,roles.title AS Title, roles.salary AS Salary, departments.dept_name AS Department, CONCAT(m.first_name, ' ', m.last_name) AS Manager FROM employees e INNER JOIN roles ON e.role_id = roles.id INNER JOIN departments ON roles.department_id = departments.id LEFT JOIN employees m ON e.manager_id = m.id ORDER BY departments.dept_name;";
     
@@ -138,6 +141,7 @@ function viewByDepartment(){
   
 }
 
+//View all employees ordered by manager
 function viewByManager(){
     const query = "SELECT e.id, CONCAT(e.first_name, ' ', e.last_name) AS Name,roles.title AS Title, roles.salary AS Salary, departments.dept_name AS Department, CONCAT(m.first_name, ' ', m.last_name) AS Manager FROM employees e INNER JOIN roles ON e.role_id = roles.id INNER JOIN departments ON roles.department_id = departments.id LEFT JOIN employees m ON e.manager_id = m.id ORDER BY e.manager_id";
      
@@ -174,17 +178,18 @@ function viewByManager(){
             },
             {
 
-                //FIND A WAY TO GRAB ROLES FROM ROLES TABLE-- NOT FROM EMPLOYEES QUERY
+                
                 type: "list",
                 message: "What is the role of the employee?",
                 name: "employeeRole",
-                choices: getRoles(),
+                //This method grabs all of the roles from the roles table for the user to pick from
+                choices: getRoles()
             },
             {
                 type: "list",
                 message: "Who is the employee's manager?",
                 name: "employeeManager",
-                
+                //This method grabs all of the managers and pushes them into an array for the user to pick from
                 choices: function(){
                     var managerArray = [];
                     for(var i = 0; i < results.length; i++){
@@ -199,7 +204,7 @@ function viewByManager(){
         ]).then(answers => {
            connection.query("SELECT * FROM roles", function(err, results){
                
-
+                //For loop iterates through the roles and checks to see if the employee role matches a title and assigns the corresponding Role ID to a variable to be injected into the addQuery function
                 for (let i = 0; i < results.length; i++){
                    if (answers.employeeRole === results[i].title){
                      roleID = results[i].id;
@@ -207,13 +212,14 @@ function viewByManager(){
                }
 
                connection.query(query, function(err, results){
-               
+               //For loop iterates through the results and if the manager that the user picked matches a manager in the results query, the managerID is assigned to a variable to be injected into the addQuery function
                 for (let i = 0; i < results.length; i++){
                  if (answers.employeeManager === results[i].Name){
                      managerID = results[i].id
                  }
              }
 
+             //addQuery function which takes in roleID, managerID, and the name of the new employee as parameters
              addQuery(roleID, managerID, answers.employeeFirstName, answers.employeeLastName);
  
 
@@ -227,7 +233,8 @@ function viewByManager(){
         }) 
     })
  } 
-
+ 
+ //Function that creates a new employee with an SQL query based on input from the user
  function addQuery(roleID, managerID, employeeFirstName, employeeLastName){
     connection.query("INSERT INTO employees (first_name, last_name, role_id, manager_id) VALUES(?, ?, ?, ?)", [employeeFirstName, employeeLastName, roleID, managerID], function(err, results){
         if(err) throw err;
@@ -238,6 +245,7 @@ function viewByManager(){
     
  }
 
+ //Function that creates a new department with an SQL query based on input from the user
  function addDept(){
     
      inquirer.prompt({
@@ -252,6 +260,7 @@ function viewByManager(){
      })
  }
 
+ //Function that creates a new role with an SQL query based on input from the user
  function addRole(){
 
     connection.query("SELECT * FROM departments", function(err, results){
@@ -271,6 +280,7 @@ function viewByManager(){
                 type: "list",
                 name: "corresDept",
                 message: "Which department is the role in?",
+                //Method that grabs all of the departments and puts them into an array
                 choices: function(){
                     const deptArray = [];
                     for (let i = 0; i < results.length; i++){
@@ -280,10 +290,10 @@ function viewByManager(){
                 }
             }
         ]).then(answers =>{
-            var deptID;
+            //For loop iterates through the departments, and if it finds a match, the id of the department is assigned to a variable to be injected into the SQL query
             for (let i = 0; i < results.length; i++){
                 if (answers.corresDept === results[i].dept_name){
-                    deptID = results[i].id;
+                    var deptID = results[i].id;
                 }
             }
 
@@ -298,10 +308,9 @@ function viewByManager(){
         })
     })
 
-    
-    
  }
 
+ //Simple function that grabs all of the roles from the database and displays them to the user
  function viewAllRoles(){
      connection.query("SELECT roles.title AS Title, roles.salary AS Salary, departments.dept_name AS Department FROM roles INNER JOIN departments ON roles.department_id = departments.id", function(err, results){
          console.log("\n")
@@ -310,6 +319,7 @@ function viewByManager(){
      })
  }
 
+ //Simple function that grabs all of the departments from the database and displays them to the user
  function viewAllDepts(){
     connection.query("SELECT * FROM departments", function(err, results){
         console.log("\n")
@@ -329,6 +339,7 @@ function updateEmployeeRole(){
                 type: "list",
                 name: "employeeToUp",
                 message: "Which employee would you like to update?",
+                //Method that grabs all of the employees and puts them into an array for the user to choose from
                 choices: function(){
                     employeeArr = [];
                     for(let i = 0; i < results.length; i++){
@@ -345,11 +356,13 @@ function updateEmployeeRole(){
             }
         ]).then(answers =>{
 
+            //For loop iterates through the results and if the employee that the user picks matches a name in the database, it sets the ID of the employee to variable
             for (let i = 0; i < results.length; i++){
                 if (answers.employeeToUp === results[i].Name){
                     var empID = results[i].id;
  
                 }
+                //Check to see if the updated employee role the user picked matches a role, and then assign the manager ID and roleID to variables to be injected into the UPDATE query
                  if (answers.employeeUpRole === results[i].Title){
                     var manID = results[i].managerID;
                     var posID = results[i].RoleID;
@@ -365,7 +378,7 @@ function updateEmployeeRole(){
         })  
     })
 }
-
+ //Helper function that grabs all the roles and puts them into an array
 function getRoles(){
 
     connection.query("SELECT * FROM roles", function(err, results){
@@ -377,6 +390,7 @@ function getRoles(){
     return roleArray;
 }
 
+//Function that removes a selected employee
 function removeEmployee(){
     connection.query("SELECT * FROM employees", function(err, results){
         inquirer.prompt({
@@ -393,6 +407,7 @@ function removeEmployee(){
                 return removeArray;
             }
         }).then(answers => {
+            //Used split method to split the employee name into an array, so the first and last name are available as separate values for DELETE query
             var nameSplit = answers.removeEmployee.split(" ");
            
             connection.query(`DELETE FROM employees WHERE first_name = "${nameSplit[0]}" AND last_name = "${nameSplit[1]}" `, function(err, results){
