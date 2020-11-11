@@ -3,6 +3,8 @@
 
 Alliance is a Content Management System designed to make it easy to view, add, and revise data within a company's employee hierarchy.  This is a command line application that runs with the help of Node.js, Inquirer, and MySQL.
 
+View a demo video of the application <a href = "https://drive.google.com/file/d/18rWl6eA6L_rVde3FRvqNjMWrGsXQMvaU/view">here</a>
+
 ## User Story
 As a business owner <br>
 I want to be able to view and manage the departments, roles, and employees in my company <br>
